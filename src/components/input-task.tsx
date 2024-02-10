@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { createTask } from "../store/reducers/task";
+import { toast } from "sonner";
 import { ChangeEvent, FormEvent, useState } from "react";
 
 export function InputTask(){
@@ -16,6 +17,8 @@ export function InputTask(){
 
     dispatch(createTask({ id: crypto.randomUUID(), content: taskContent.toUpperCase(), finalized: false}));
     setTaskContent('');
+    
+    toast.success("Task was created!");
   }
 
   return (
