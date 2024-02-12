@@ -1,11 +1,13 @@
 import { Check } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createTask } from "../store/reducers/task";
 import { toast } from "sonner";
 import { ChangeEvent, FormEvent, useState } from "react";
+import { RootState } from "../store";
 
 export function InputTask(){
   const [taskContent, setTaskContent] = useState<string>('');
+  const tasks = useSelector((state: RootState) => state.task)
   const dispatch = useDispatch();
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement>){
@@ -14,10 +16,15 @@ export function InputTask(){
 
   function handleCreateNewTask(event: FormEvent){
     event.preventDefault();
+    const newTask = { id: crypto.randomUUID(), content: taskContent.toUpperCase(), finalized: false};
+    dispatch(createTask(newTask));
 
-    dispatch(createTask({ id: crypto.randomUUID(), content: taskContent.toUpperCase(), finalized: false}));
-    setTaskContent('');
+    const updatedTasks = [...tasks, newTask];
+
+    console.log(updatedTasks);
     
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    setTaskContent('');
     toast.success("Task was created!");
   }
 

@@ -7,14 +7,16 @@ export interface TaskState {
   finalized?: boolean
 }
 
-const initialState: TaskState[] = []
+const storedTasks = localStorage.getItem('tasks');
+
+const initialState: TaskState[] = storedTasks ? JSON.parse(storedTasks) : [];
 
 const taskSlice = createSlice({
   name: "task",
   initialState,
   reducers: {
     createTask: (state, action: PayloadAction<TaskState>) => {
-      state.push(action.payload);
+      return state.concat(action.payload);
     },
     finalizeTask: (state, action: PayloadAction<string>) => {
       const taskId = action.payload;
@@ -25,7 +27,10 @@ const taskSlice = createSlice({
     },
     deleteTask: (state, action: PayloadAction<string>) => {
       const taskId = action.payload;
-      return state.filter(task => task.id !== taskId);
+      const deleteTask = state.filter(task => task.id !== taskId);
+      localStorage.setItem('tasks', JSON.stringify(deleteTask));
+
+      return deleteTask;
     }
   }
 });
